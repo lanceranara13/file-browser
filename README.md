@@ -10,6 +10,20 @@ A self-hosted file browser with a quiet, dense interface.
 
 Built with Next.js 16, React 19, Tailwind CSS 4 and [Video.js v10](https://videojs.org/).
 
+## Screenshots
+
+**Large icons.** Thumbnails of pictures and videos, made by ffmpeg the first time a folder is opened.
+
+![A folder of photos and a video clip in the Large icons view](docs/screenshots/thumbnails.png)
+
+**Video playback.** An HEVC 10-bit MKV, which browsers can't play, transcoded on the GPU. The Playback panel shows the source, the mode and why, and the encoder in use.
+
+![An HEVC MKV playing in the browser beside its Details and Playback panels](docs/screenshots/video.png)
+
+**Details.** Sorted by date modified. The selected row shows its download, rename, move and delete buttons, and the footer lists the keyboard shortcuts.
+
+![The root folder in the Details view, sorted by date modified, with one row selected](docs/screenshots/details.png)
+
 ## Quick start (Docker)
 
 ```bash
