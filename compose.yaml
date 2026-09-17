@@ -1,0 +1,34 @@
+# file-browser. The base file runs on the CPU; add one override for a GPU:
+#
+#   AMD or Intel (VAAPI):  docker compose -f compose.yaml -f compose.amd.yaml up -d --build
+#   NVIDIA (NVENC/NVDEC):  docker compose -f compose.yaml -f compose.nvidia.yaml up -d --build
+#
+# Or pick it once in .env (see .env.example):  COMPOSE_FILE=compose.yaml:compose.amd.yaml
+services:
+  file-browser:
+    build: .
+    image: file-browser:latest
+    container_name: file-browser
+    restart: unless-stopped
+    init: true
+    # Match the owner of FILES_DIR so uploads stay editable from the host.
+    user: "${PUID:-1000}:${PGID:-1000}"
+    ports:
+      - "${PORT:-3300}:3000"
+    environment:
+      FILES_ROOT: /files
+      TRANSCODE_DIR: /cache
+      DATA_DIR: /data
+      # auto | vaapi | nvenc | cpu
+      TRANSCODE_HWACCEL: ${TRANSCODE_HWACCEL:-auto}
+      TRANSCODE_MAX_JOBS: ${TRANSCODE_MAX_JOBS:-2}
+      # A video browsers could play as it is is still transcoded above this bitrate; 0 plays it as it is.
+      TRANSCODE_DIRECT_MAX_MBPS: ${TRANSCODE_DIRECT_MAX_MBPS:-20}
+      # auto: HEVC for browsers that decode it, when the GPU encodes it | off: always H.264
+      TRANSCODE_HEVC: ${TRANSCODE_HEVC:-auto}
+    volumes:
+      - ${FILES_DIR:-./files}:/files
+      # Transcoded segments. Cleared on start and after a minute without viewers.
+      - ${CACHE_DIR:-./cache}:/cache
+      # App state. Keep it.
+      - ${DATA_DIR:-./data}:/data

@@ -1,0 +1,19 @@
+# AMD (and Intel) GPUs through VAAPI.
+#
+# The container needs the DRM render node and membership of the groups that own
+# it on this host. Look the ids up with:  getent group render video
+#
+# /dev/dri is bind-mounted rather than listed under `devices`: `devices` copies
+# the nodes that exist when the container starts, so a GPU driver that finishes
+# loading a moment later — as after a boot — leaves the container without its
+# render node until it is restarted. The mount follows the host's /dev/dri, and
+# the cgroup rule lets the container open any DRM device (major 226) in it.
+services:
+  file-browser:
+    volumes:
+      - /dev/dri:/dev/dri
+    device_cgroup_rules:
+      - "c 226:* rmw"
+    group_add:
+      - "${RENDER_GID:-993}"
+      - "${VIDEO_GID:-44}"

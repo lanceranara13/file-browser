@@ -1,0 +1,16 @@
+# NVIDIA GPUs through NVENC (encode) and NVDEC/CUDA (decode and scaling).
+#
+# Host requirements: the proprietary NVIDIA driver and nvidia-container-toolkit
+# (`sudo nvidia-ctk runtime configure --runtime=docker && sudo systemctl restart docker`).
+# The `video` capability is what mounts libnvidia-encode and libnvcuvid.
+services:
+  file-browser:
+    environment:
+      NVIDIA_DRIVER_CAPABILITIES: compute,video,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, compute, video, utility]
